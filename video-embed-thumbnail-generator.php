@@ -1092,9 +1092,8 @@ function KGVID_shortcode($atts, $content = ''){
 					if ( $name != "original" && $encodevideo_info[$name."url"] == $content ) { unset($sources['original']); }
 					if ( $encodevideo_info[$name."_exists"] ) {
 						if ( $type != "mp4" || !$mp4already ) {
-							$shortcode_type = $type;
-							if ( $type == "ogg" ) { $shortcode_type = "ogv"; } //the shortcode requires ogv but MIME is still video/ogg
-							$sources[$name] = $shortcode_type.'="'.$encodevideo_info[$name."url"].'" ';
+							$shortcode_type = wp_check_filetype( $encodevideo_info[$name."url"], wp_get_mime_types() );
+							$sources[$name] = $shortcode_type['ext'].'="'.$encodevideo_info[$name."url"].'" ';
 							if ( $type == "mp4" ) { //WordPress built-in shortcode doesn't support multiple videos of the same type but we'll hack it in later
 								$search_string = '<source type="video/mp4" src="'.$encodevideo_info[$name."url"].'" />';
 								$mp4already = true;
