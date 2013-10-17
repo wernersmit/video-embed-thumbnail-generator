@@ -155,6 +155,11 @@ Enter the username & password in the plugin settings "FFMPEG Settings" tab, or u
 
 == Changelog ==
 
+= 4.2.6 - October 17, 2013 =
+* Fixed bug that broke playback in some cases when using the shortcode without a URL.
+* Fixed bug that ignored width and height saved in the attachment meta if width and height were not set in the shortcode.
+* Fixed bug that broke WordPress Default player when embedding M4V files.
+
 = 4.2.5 - October 12, 2013 =
 * Fixed bug that disabled FFMPEG when other plugin settings were changed.
 

@@ -3,7 +3,7 @@
 Plugin Name: Video Embed & Thumbnail Generator
 Plugin URI: http://www.kylegilman.net/2011/01/18/video-embed-thumbnail-generator-wordpress-plugin/
 Description: Generates thumbnails, HTML5-compliant videos, and embed codes for locally hosted videos. Requires FFMPEG or LIBAV for encoding. <a href="options-general.php?page=video-embed-thumbnail-generator/video-embed-thumbnail-generator.php">Settings</a> | <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=kylegilman@gmail.com&item_name=Video%20Embed%20And%20Thumbnail%20Generator%20Plugin%20Donation">Donate</a>
-Version: 4.2.5
+Version: 4.2.6
 Author: Kyle Gilman
 Author URI: http://www.kylegilman.net/
 
@@ -47,7 +47,7 @@ function kgvid_default_options_fn() {
 	$upload_capable = kgvid_upload_capable();
 
 	$options = array(
-		"version"=>4.25,
+		"version"=>4.26,
 		"embed_method"=>"Video.js",
 		"template"=>false,
 		"template_gentle"=>"on",
@@ -932,16 +932,6 @@ function KGVID_shortcode($atts, $content = ''){
 			$content = $original_content;
 			$sources = array();
 
-			$moviefiletype = pathinfo($content, PATHINFO_EXTENSION);
-			if ( $moviefiletype == "mov" || $moviefiletype == "m4v" ) { $moviefiletype = "mp4"; }
-			$video_formats = array(
-				"original" => $moviefiletype,
-				"1080" => "mp4",
-				"720" => "mp4",
-				"mobile" => "mp4",
-				"webm" => "webm",
-				"ogg" => "ogg"
-			);
 			$compatible = array("flv", "f4v", "mp4", "mov", "m4v", "ogv", "ogg", "webm");
 			$flashcompatible = array("flv", "f4v", "mp4", "mov", "m4v");
 			$h264compatible = array("mp4", "mov", "m4v");
@@ -963,13 +953,14 @@ function KGVID_shortcode($atts, $content = ''){
 				if ( function_exists('wp_read_video_metadata') ) { $video_meta = wp_read_video_metadata($moviefile); }
 
 				if ( $video_meta && array_key_exists('width', $video_meta) ) { $widthset = $video_meta['width']; }
-				else { $widthset = get_post_meta($id, "_kgflashmediaplayer-actualwidth", true); }
+				else { $widthset = get_post_meta($id, "_kgflashmediaplayer-width", true); }
 
 				if ( $video_meta && array_key_exists('height', $video_meta) ) { $heightset = $video_meta['height']; }
-				else { $heightset = get_post_meta($id, "_kgflashmediaplayer-actualheight", true); }
+				else { $heightset = get_post_meta($id, "_kgflashmediaplayer-height", true); }
 
 				if ( !empty($widthset) && !empty($heightset) ) {
 					$aspect_ratio = $heightset/$widthset;
+					$query_atts['width'] = $widthset;
 					$query_atts['height'] = round($query_atts['width']*$aspect_ratio);
 				}
 
@@ -1005,6 +996,17 @@ function KGVID_shortcode($atts, $content = ''){
 
 				$countable = false;
 			}
+
+			$moviefiletype = pathinfo($content, PATHINFO_EXTENSION);
+			if ( $moviefiletype == "mov" || $moviefiletype == "m4v" ) { $moviefiletype = "mp4"; }
+			$video_formats = array(
+				"original" => $moviefiletype,
+				"1080" => "mp4",
+				"720" => "mp4",
+				"mobile" => "mp4",
+				"webm" => "webm",
+				"ogg" => "ogg"
+			);
 
 			if ( in_array($moviefiletype, $compatible) ) {
 				$encodevideo_info["original_exists"] = true;
@@ -1123,7 +1125,7 @@ function KGVID_shortcode($atts, $content = ''){
 					if ( $name != "original" && $encodevideo_info[$name."url"] == $content ) { unset($sources['original']); }
 					if ( $encodevideo_info[$name."_exists"] ) { $sources[$name] = "\t\t\t\t\t".'<source src="'.$encodevideo_info[$name."url"].'" type="video/'.$type.'">'."\n"; }
 				}
-
+error_log(print_r($encodevideo_info,true));
 				$code .= '<video id="video_'.$div_suffix.'" ';
 				if ( $query_atts["loop"] == 'true') { $code .= 'loop '; }
 				if ( $query_atts["autoplay"] == 'true') { $code .= 'autoplay '; }
