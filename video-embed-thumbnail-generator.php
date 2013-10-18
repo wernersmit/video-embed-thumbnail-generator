@@ -1074,17 +1074,17 @@ function KGVID_shortcode($atts, $content = ''){
 			else { $aligncode = ""; }
 
 			$code .= '<div id="kgvid_'.$div_suffix.'_wrapper" class="kgvid_wrapper"'.$aligncode.'>'."\n\t\t\t";
-			$code .= '<div id="video_'.$div_suffix.'_div" class="kgvid_videodiv" itemscope itemtype="http://schema.org/VideoObject">'."\n\t\t\t\t";
-			if ( $query_atts["poster"] != '' ) { $code .= '<meta itemprop="thumbnailURL" content="'.$query_atts["poster"].'" />'."\n\t\t\t\t"; }
+			$code .= '<div id="video_'.$div_suffix.'_div" class="kgvid_videodiv" itemscope itemtype="http://schema.org/VideoObject">';
+			if ( $query_atts["poster"] != '' ) { $code .= '<meta itemprop="thumbnailURL" content="'.$query_atts["poster"].'" />'; }
 			if ( !empty($id) ) { $schema_embedURL = site_url('/')."?attachment_id=".$id."&amp;kgvid_video_embed[enable]=true"; }
 			else { $schema_embedURL = $content; }
-			$code .= '<meta itemprop="embedURL" content="'.$schema_embedURL.'" />'."\n\t\t\t\t";
+			$code .= '<meta itemprop="embedURL" content="'.$schema_embedURL.'" />';
 
-			if ( !empty($query_atts['title']) ) { $code .= '<meta itemprop="name" content="'.$query_atts['title'].'" />'."\n\t\t\t\t"; }
+			if ( !empty($query_atts['title']) ) { $code .= '<meta itemprop="name" content="'.$query_atts['title'].'" />'; }
 			if ( !empty($query_atts['description']) ) { $description = $query_atts['description']; }
 			elseif ( !empty($query_atts['caption']) ) { $description = $query_atts['caption']; }
 			else { $description = ""; }
-			if ( !empty($description) ) { $code .= '<meta itemprop="description" content="'.esc_attr($description).'" />'."\n\t\t\t\t"; }
+			if ( !empty($description) ) { $code .= '<meta itemprop="description" content="'.esc_attr($description).'" />'; }
 
 			if ( $options['embed_method'] == "WordPress Default" ) {
 				$wp_shortcode = "[video ";
@@ -1303,6 +1303,14 @@ error_log(print_r($encodevideo_info,true));
 }
 add_shortcode('FMP', 'KGVID_shortcode');
 add_shortcode('KGVID', 'KGVID_shortcode');
+
+
+function kgvid_no_texturize_shortcode($shortcodes){
+    $shortcodes[] = 'KGVID';
+    $shortcodes[] = 'FMP';
+    return $shortcodes;
+}
+add_filter( 'no_texturize_shortcodes', 'kgvid_no_texturize_shortcode' );
 
 function kgvid_ajax_generate_encode_checkboxes() {
 
