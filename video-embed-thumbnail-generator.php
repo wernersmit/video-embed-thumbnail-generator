@@ -1218,7 +1218,8 @@ function kgvid_video_embed_print_scripts() {
 			&& !empty($matches[5][0])
 			&& ( in_array( 'KGVID', $matches[2] ) || in_array( 'FMP', $matches[2] ) ) ) { //if KGVID or FMP shortcode is in posts on this page.
 
-				echo '<meta property="og:video" content="'.$matches[5][0].'" />'."\n";
+			echo '<meta property="og:video" content="'.$matches[5][0].'" />'."\n";
+			echo '<meta property="og:video:type" content="text/html" />'."\n";
 
 				if ( array_key_exists( 3, $matches ) ) {
 					$attributes = shortcode_parse_atts($matches[3][0]);
